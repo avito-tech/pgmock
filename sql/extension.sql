@@ -1,0 +1,3 @@
+create schema pgmock;
+
+create extension pgmock with schema pgmock;

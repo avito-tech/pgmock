@@ -1,0 +1,4 @@
+# pgmock extension
+comment = 'pgmock extension'
+default_version = '0.2'
+relocatable = false

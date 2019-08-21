@@ -1,0 +1,11 @@
+pgmock (0.2) stable; urgency=medium
+
+  * Added support for regprocedure operator
+
+ -- Vladimir Aleshin <vvaleshin@avito.ru>  Tue, 05 Jun 2018 12:00:00 +0300
+
+pgmock (0.1) stable; urgency=medium
+
+  * Initial release.
+
+ -- Vladimir Aleshin <vvaleshin@avito.ru>  Mon, 23 Apr 2018 20:03:01 +0300

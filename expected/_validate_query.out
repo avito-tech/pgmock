@@ -1,0 +1,156 @@
+-- valid queries
+select pgmock._validate_query('123');
+ _validate_query 
+-----------------
+ 123
+(1 row)
+
+select pgmock._validate_query($$"${'some_schema.some_table'::regclass}"$$);
+             _validate_query             
+-----------------------------------------
+ "${'some_schema.some_table'::regclass}"
+(1 row)
+
+select pgmock._validate_query($$"${'some_schema.some_proc'::regproc}"$$);
+            _validate_query            
+---------------------------------------
+ "${'some_schema.some_proc'::regproc}"
+(1 row)
+
+select pgmock._validate_query($${ "oid": 123 }$$);
+ _validate_query 
+-----------------
+ {"oid": 123}
+(1 row)
+
+select pgmock._validate_query($${ "oid": "${'some_schema.some_table'::regclass}" }$$);
+                 _validate_query                  
+--------------------------------------------------
+ {"oid": "${'some_schema.some_table'::regclass}"}
+(1 row)
+
+select pgmock._validate_query($${ "oid": "${'some_schema.some_proc'::regproc}" }$$);
+                _validate_query                 
+------------------------------------------------
+ {"oid": "${'some_schema.some_proc'::regproc}"}
+(1 row)
+
+select pgmock._validate_query($$
+    {
+        "oid": "${'some_schema.some_proc'::regproc}",
+        "mock_name": "some_proc_mock_name"
+    }
+$$);
+                                  _validate_query                                   
+------------------------------------------------------------------------------------
+ {"oid": "${'some_schema.some_proc'::regproc}", "mock_name": "some_proc_mock_name"}
+(1 row)
+
+select pgmock._validate_query($$
+    {
+        "oid": "${'some_schema.some_table'::regclass}",
+        "constraints": ["constraint_name"]
+    }
+$$);
+                                   _validate_query                                    
+--------------------------------------------------------------------------------------
+ {"oid": "${'some_schema.some_table'::regclass}", "constraints": ["constraint_name"]}
+(1 row)
+
+select pgmock._validate_query($$
+    {
+        "oid": "${'some_schema.some_table'::regclass}",
+        "not_nulls": ["column_name1", "column_name2"]
+    }
+$$);
+                                         _validate_query                                         
+-------------------------------------------------------------------------------------------------
+ {"oid": "${'some_schema.some_table'::regclass}", "not_nulls": ["column_name1", "column_name2"]}
+(1 row)
+
+select pgmock._validate_query($$
+    {
+        "oid": "${'some_schema.some_table'::regclass}",
+        "defaults": ["column_name1", "column_name2"]
+    }
+$$);
+                                        _validate_query                                         
+------------------------------------------------------------------------------------------------
+ {"oid": "${'some_schema.some_table'::regclass}", "defaults": ["column_name1", "column_name2"]}
+(1 row)
+
+select pgmock._validate_query($$
+    {
+        "constant_functions": [{
+            "name": "CONSTANT_FUNCTION_NAME",
+            "value": "42"
+        }]
+    }
+$$);
+                               _validate_query                               
+-----------------------------------------------------------------------------
+ {"constant_functions": [{"name": "CONSTANT_FUNCTION_NAME", "value": "42"}]}
+(1 row)
+
+select pgmock._validate_query($$
+    {
+        "oid": "${'some_schema.some_table'::regclass}",
+        "triggers": [{
+            "name": "some_trigger_name",
+            "procedure": "${'some_schema.some_trigger_procedure'::regclass}"
+        }]
+    }
+$$);
+                                                                         _validate_query                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"oid": "${'some_schema.some_table'::regclass}", "triggers": [{"name": "some_trigger_name", "procedure": "${'some_schema.some_trigger_procedure'::regclass}"}]}
+(1 row)
+
+-- invalid queries
+\set VERBOSITY terse
+select pgmock._validate_query('-123');
+ERROR:  Invalid mock (sub)query '-123': Invalid oid
+select pgmock._validate_query($$"incorrect string"$$);
+ERROR:  Invalid mock (sub)query '"incorrect string"': Invalid oid
+select pgmock._validate_query($${ "oid": -123 }$$);
+ERROR:  Invalid mock (sub)query '{"oid": -123}': Invalid oid
+select pgmock._validate_query($${ "oid": 123.42 }$$);
+ERROR:  Invalid mock (sub)query '{"oid": 123.42}': Invalid oid
+select pgmock._validate_query($${ "oid": "incorrect string" }$$);
+ERROR:  Invalid mock (sub)query '{"oid": "incorrect string"}': Invalid oid
+select pgmock._validate_query($$
+    {
+        "oid": "${'some_schema.some_proc'::regproc}",
+        "mock_name": "invalid mock name"
+    }
+$$);
+ERROR:  Invalid mock (sub)query '{"oid": "${''some_schema.some_proc''::regproc}", "mock_name": "invalid mock name"}': Invalid mock name
+select pgmock._validate_query($$
+    {
+        "oid": "${'some_schema.some_table'::regclass}",
+        "constraints": "constraint_name"
+    }
+$$);
+ERROR:  Invalid mock (sub)query '{"oid": "${''some_schema.some_table''::regclass}", "constraints": "constraint_name"}': Invalid constraints
+select pgmock._validate_query($$
+    {
+        "oid": "${'some_schema.some_table'::regclass}",
+        "constraints": ["invalid constraint name"]
+    }
+$$);
+ERROR:  Invalid mock (sub)query '{"oid": "${''some_schema.some_table''::regclass}", "constraints": ["invalid constraint name"]}': Invalid constraints
+select pgmock._validate_query($$
+    {
+        "constant_functions": [{
+            "name": "INVALID NAME",
+            "value": "42"
+        }]
+    }
+$$);
+ERROR:  Invalid mock (sub)query '{"constant_functions": [{"name": "INVALID NAME", "value": "42"}]}': Invalid constant functions
+select pgmock._validate_query($$
+    {
+        "constant_functions": { "name": "INVALID NAME", "value": "42" }
+    }
+$$);
+ERROR:  Invalid mock (sub)query '{"constant_functions": {"name": "INVALID NAME", "value": "42"}}': Invalid constant functions

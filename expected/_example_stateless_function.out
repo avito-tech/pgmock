@@ -1,0 +1,60 @@
+begin;
+create or replace function public.universal_answer()
+    returns integer immutable language sql as
+$func$
+    select 42;
+$func$;
+select pgmock.mock($$"${'public.universal_answer'::regproc}"$$);
+ mock 
+------
+ 
+(1 row)
+
+select pg_temp.setup();
+ setup 
+-------
+ 
+(1 row)
+
+select pg_temp.universal_answer();
+ universal_answer 
+------------------
+               42
+(1 row)
+
+select pg_temp.teardown();
+ teardown 
+----------
+ 
+(1 row)
+
+select pgmock.mock($$
+    {
+        "oid": "${'public.universal_answer'::regproc}",
+        "mock_name": "another_universal_answer"
+    }
+$$);
+ mock 
+------
+ 
+(1 row)
+
+select pg_temp.setup();
+ setup 
+-------
+ 
+(1 row)
+
+select pg_temp.another_universal_answer();
+ another_universal_answer 
+--------------------------
+                       42
+(1 row)
+
+select pg_temp.teardown();
+ teardown 
+----------
+ 
+(1 row)
+
+rollback;

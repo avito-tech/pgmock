@@ -1,0 +1,24 @@
+select pgmock._format_query('123');
+ _format_query 
+---------------
+ {"oid": 123}
+(1 row)
+
+select pgmock._format_query($$"${'schema_name.table_name'::regclass}"$$);
+                  _format_query                   
+--------------------------------------------------
+ {"oid": "${'schema_name.table_name'::regclass}"}
+(1 row)
+
+select pgmock._format_query($${"oid": 123}$$);
+ _format_query 
+---------------
+ {"oid": 123}
+(1 row)
+
+select pgmock._format_query($${"oid": "${'schema_name.table_name'::regclass}"}$$);
+                  _format_query                   
+--------------------------------------------------
+ {"oid": "${'schema_name.table_name'::regclass}"}
+(1 row)
+

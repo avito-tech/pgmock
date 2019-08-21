@@ -1,0 +1,36 @@
+create function public.foo() returns integer language plpgsql as
+$func$
+begin
+    return 42;
+end;
+$func$;
+create function public.foo(param integer) returns integer language plpgsql as
+$func$
+begin
+    return param;
+end;
+$func$;
+select pgmock.mock($$"${'public.foo()'::regprocedure}"$$);
+ mock 
+------
+ 
+(1 row)
+
+select public.foo() = pg_temp.foo();
+ ?column? 
+----------
+ t
+(1 row)
+
+select pgmock.mock($$"${'public.foo(integer)'::regprocedure}"$$);
+ mock 
+------
+ 
+(1 row)
+
+select public.foo(8) = pg_temp.foo(8);
+ ?column? 
+----------
+ t
+(1 row)
+

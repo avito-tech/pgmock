@@ -1,0 +1,16 @@
+Source: pgmock
+Section: database
+Priority: optional
+Maintainer: Vladimir Aleshin <vvaleshin@avito.ru>
+Uploaders: Vladimir Aleshin <vvaleshin@avito.ru>
+Build-Depends: debhelper (>= 9), postgresql-server-dev-all (>= 153~)
+Standards-Version: 3.9.6
+Vcs-Browser: https://github.com/avito-tech/pgmock
+Vcs-Git: https://github.com/avito-tech/pgmock.git
+
+Package: postgresql-PGVERSION-pgmock
+Architecture: any
+Depends: ${misc:Depends}, postgresql-PGVERSION
+Description: Creates mocks for PostgreSQL tables and stored procedures
+ PostgreSQL extension that creates mocks for tables and stored procedures
+ written in SQL and PL/pgSQL

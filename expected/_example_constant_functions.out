@@ -1,0 +1,34 @@
+begin;
+select pgmock.mock($$
+    {
+        "constant_functions": [
+            { "name": "DEFAULT_CAT_NAME", "value": "Snezhok" },
+            { "name": "DEFAULT_CAT_AGE", "value": 6, "returns": "smallint" },
+            { "name": "DEFAULT_MICE_CAUGHT", "value": 128 }
+        ]
+    }
+$$);
+ mock 
+------
+ 
+(1 row)
+
+select pg_temp.DEFAULT_CAT_NAME();
+ default_cat_name 
+------------------
+ Snezhok
+(1 row)
+
+select pg_temp.DEFAULT_CAT_AGE();
+ default_cat_age 
+-----------------
+               6
+(1 row)
+
+select pg_temp.DEFAULT_MICE_CAUGHT();
+ default_mice_caught 
+---------------------
+                 128
+(1 row)
+
+rollback;
